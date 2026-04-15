@@ -20,15 +20,30 @@ See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for the full design.
 
 ## Status
 
-Work in progress. The plugin is built in phases:
+Phases 1–3 are in place.
 
-- **Phase 1** — minimum viable scaffolding: `belief-store` MCP server,
-  PostToolUse hook, `cartographer` + `dreamer` subagents, `/predict` +
-  `/probe` skills.
-- **Phase 2** — EFE planning: `policy-selector` + `/plan-efe`, non-parametric
-  `recall_similar_episodes`.
-- **Phase 3** — self-repair: `belief-reviser` + `hierarchy-arbiter`,
-  `/reflect` + `/checkpoint`, precision-weighted skill library.
+- **Phase 1** — scaffolding: `belief-store` MCP server, PostToolUse
+  hook, `cartographer` + `dreamer` subagents, `/predict` + `/probe`
+  skills.
+- **Phase 2** — EFE planning: `policy-selector` + `/plan-efe`,
+  non-parametric `recall_similar_episodes`.
+- **Phase 3** — self-repair: `belief-reviser` + `hierarchy-arbiter`
+  subagents, `/reflect` + `/checkpoint` skills, belief snapshots,
+  precision-weighted skill library (`log_skill_outcome`,
+  `score_skill_reliability`).
+
+### MCP tools exposed by `belief-store`
+
+| Tool | Purpose |
+|---|---|
+| `store_prediction` | record expected observation before a tool call |
+| `record_observation` | write actual + surprise (normally by hook) |
+| `retrieve_beliefs` | list predictions for a task (optionally only surprising) |
+| `list_beliefs` | list current belief entries (key/value/precision) |
+| `update_belief` | upsert a belief entry |
+| `snapshot_beliefs` / `rollback_beliefs` | labelled checkpoint |
+| `log_skill_outcome` / `score_skill_reliability` | skill library stats |
+| `recall_similar_episodes` | k-NN over past reconciled predictions |
 
 ## Build
 
