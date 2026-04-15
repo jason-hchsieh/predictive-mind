@@ -1,7 +1,17 @@
 {
   "name": "predictive-mind",
-  "description": "FEP/World-Models scaffolding for stable LLM coding agents",
+  "description": "FEP/World-Models scaffolding for stable LLM coding agents: predict-before-act, inspectable belief state, and surprise-triggered reflection.",
   "version": "0.1.0",
   "author": { "name": "predictive-mind contributors" },
-  "license": "MIT"
+  "homepage": "https://github.com/jason-hchsieh/predictive-mind",
+  "repository": "https://github.com/jason-hchsieh/predictive-mind",
+  "license": "MIT",
+  "keywords": [
+    "active-inference",
+    "free-energy-principle",
+    "world-models",
+    "agent-workflow",
+    "belief-state",
+    "prediction-error"
+  ]
 }
