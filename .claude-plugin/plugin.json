@@ -1,0 +1,7 @@
+{
+  "name": "predictive-mind",
+  "description": "FEP/World-Models scaffolding for stable LLM coding agents",
+  "version": "0.1.0",
+  "author": { "name": "predictive-mind contributors" },
+  "license": "MIT"
+}
