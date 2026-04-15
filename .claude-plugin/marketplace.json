@@ -1,0 +1,33 @@
+{
+  "name": "predictive-mind",
+  "owner": {
+    "name": "predictive-mind contributors"
+  },
+  "metadata": {
+    "description": "Marketplace for the predictive-mind plugin: FEP/World-Models scaffolding for stable LLM coding agents.",
+    "version": "0.1.0"
+  },
+  "plugins": [
+    {
+      "name": "predictive-mind",
+      "source": "./",
+      "description": "FEP/World-Models scaffolding for stable LLM coding agents: predict-before-act, inspectable belief state, and surprise-triggered reflection.",
+      "version": "0.1.0",
+      "author": {
+        "name": "predictive-mind contributors"
+      },
+      "homepage": "https://github.com/jason-hchsieh/predictive-mind",
+      "repository": "https://github.com/jason-hchsieh/predictive-mind",
+      "license": "MIT",
+      "keywords": [
+        "active-inference",
+        "free-energy-principle",
+        "world-models",
+        "agent-workflow",
+        "belief-state",
+        "prediction-error"
+      ],
+      "category": "agent-workflow"
+    }
+  ]
+}
