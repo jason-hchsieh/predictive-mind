@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "belief-store": {
+      "command": "node",
+      "args": ["${CLAUDE_PLUGIN_ROOT}/mcp/belief-store/dist/server.js"],
+      "env": {
+        "BELIEF_DB_PATH": "${CLAUDE_PLUGIN_DATA}/beliefs.db"
+      }
+    }
+  }
+}
