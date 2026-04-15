@@ -1,7 +1,8 @@
 {
   "name": "predictive-mind",
+  "mcpServers": "./mcp/servers.json",
   "description": "FEP/World-Models scaffolding for stable LLM coding agents: predict-before-act, inspectable belief state, and surprise-triggered reflection.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "author": { "name": "predictive-mind contributors" },
   "homepage": "https://github.com/jason-hchsieh/predictive-mind",
   "repository": "https://github.com/jason-hchsieh/predictive-mind",
