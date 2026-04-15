@@ -17,6 +17,7 @@ import {
   ListToolsRequestSchema,
 } from '@modelcontextprotocol/sdk/types.js';
 import { openDb, resolveDbPath } from './db.js';
+import { jaccardSimilarity } from './similarity.js';
 
 const db = openDb(resolveDbPath());
 
@@ -107,6 +108,41 @@ const TOOLS = [
       },
     },
   },
+  {
+    name: 'recall_similar_episodes',
+    description:
+      'Non-parametric M: retrieve past reconciled predictions (across all tasks) whose action/expected text is most similar to the given context. Use BEFORE planning to see how similar situations turned out. Returns episodes sorted by similarity, higher = more similar.',
+    inputSchema: {
+      type: 'object',
+      required: ['context'],
+      properties: {
+        context: {
+          type: 'string',
+          description:
+            'The current situation to match against — typically a concatenation of the candidate action and relevant task-card fields.',
+        },
+        k: {
+          type: 'integer',
+          default: 5,
+          minimum: 1,
+          maximum: 25,
+          description: 'Number of nearest episodes to return.',
+        },
+        tool_name: {
+          type: 'string',
+          description:
+            'Optional filter: restrict recall to episodes that invoked this tool.',
+        },
+        min_similarity: {
+          type: 'number',
+          default: 0.1,
+          minimum: 0,
+          maximum: 1,
+          description: 'Discard episodes below this similarity threshold.',
+        },
+      },
+    },
+  },
 ];
 
 server.setRequestHandler(ListToolsRequestSchema, async () => ({ tools: TOOLS }));
@@ -162,6 +198,54 @@ server.setRequestHandler(CallToolRequestSchema, async (req) => {
           ORDER BY action_id DESC LIMIT ?`;
     const rows = db.prepare(sql).all(String(a.task_id), limit);
     return textResult(rows);
+  }
+
+  if (name === 'recall_similar_episodes') {
+    const context = String(a.context ?? '');
+    const k = typeof a.k === 'number' ? a.k : 5;
+    const minSim =
+      typeof a.min_similarity === 'number' ? a.min_similarity : 0.1;
+    const toolFilter = a.tool_name ? String(a.tool_name) : null;
+
+    type EpisodeRow = {
+      action_id: number;
+      task_id: string;
+      action: string;
+      expected: string;
+      actual: string;
+      surprise_score: number;
+      tool_name: string | null;
+      observed_at: string;
+    };
+
+    const sql = toolFilter
+      ? `SELECT action_id, task_id, action, expected, actual,
+                surprise_score, tool_name, observed_at
+           FROM predictions
+          WHERE actual IS NOT NULL AND tool_name = ?
+          ORDER BY action_id DESC
+          LIMIT 500`
+      : `SELECT action_id, task_id, action, expected, actual,
+                surprise_score, tool_name, observed_at
+           FROM predictions
+          WHERE actual IS NOT NULL
+          ORDER BY action_id DESC
+          LIMIT 500`;
+    const rows = (toolFilter
+      ? db.prepare(sql).all(toolFilter)
+      : db.prepare(sql).all()) as EpisodeRow[];
+
+    const scored = rows
+      .map((r) => {
+        const haystack = `${r.action} ${r.expected}`;
+        const similarity = jaccardSimilarity(context, haystack);
+        return { ...r, similarity };
+      })
+      .filter((r) => r.similarity >= minSim)
+      .sort((x, y) => y.similarity - x.similarity)
+      .slice(0, k);
+
+    return textResult(scored);
   }
 
   throw new Error(`Unknown tool: ${name}`);
