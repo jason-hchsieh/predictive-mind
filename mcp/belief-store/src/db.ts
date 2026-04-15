@@ -40,6 +40,29 @@ CREATE TABLE IF NOT EXISTS beliefs (
   updated_at  TEXT NOT NULL DEFAULT (datetime('now')),
   PRIMARY KEY (task_id, key)
 );
+
+CREATE TABLE IF NOT EXISTS belief_snapshots (
+  snapshot_id  INTEGER PRIMARY KEY AUTOINCREMENT,
+  task_id      TEXT NOT NULL,
+  label        TEXT,
+  snapshot     TEXT NOT NULL,
+  created_at   TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE INDEX IF NOT EXISTS idx_belief_snapshots_task
+  ON belief_snapshots(task_id, label);
+
+CREATE TABLE IF NOT EXISTS skill_outcomes (
+  outcome_id   INTEGER PRIMARY KEY AUTOINCREMENT,
+  skill_name   TEXT NOT NULL,
+  task_id      TEXT,
+  outcome      TEXT NOT NULL CHECK (outcome IN ('success', 'failure', 'neutral')),
+  notes        TEXT,
+  created_at   TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE INDEX IF NOT EXISTS idx_skill_outcomes_name
+  ON skill_outcomes(skill_name);
 `;
 
 export function openDb(path: string): Database.Database {
