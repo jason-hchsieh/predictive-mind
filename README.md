@@ -47,11 +47,20 @@ Phases 1–3 are in place.
 
 ## Build
 
+The belief-store MCP server is TypeScript. Build the compiled bundle
+(checked into the repo so users don't need `tsc` at runtime):
+
 ```bash
 cd mcp/belief-store
 npm install
 npm run build
 ```
+
+When the plugin is loaded by Claude Code, a `SessionStart` hook
+(`scripts/bootstrap.sh`) syncs `dist/` into `${CLAUDE_PLUGIN_DATA}` and
+runs `npm install` there — only when `package.json` changes. Per the
+Claude Code plugin guidelines, runtime state (node_modules, the SQLite
+DB) lives in `${CLAUDE_PLUGIN_DATA}` so it survives plugin updates.
 
 ## Install (dev)
 
